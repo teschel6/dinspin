@@ -1,0 +1,21 @@
+meta {
+  name: Search Meals No Match
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{baseUrl}}/meals?q=noMatch
+  body: none
+  auth: none
+}
+
+params:query {
+  q: noMatch
+}
+
+assert {
+  res.status: eq 200
+  res.body: length 0
+}
+

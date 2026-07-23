@@ -1,0 +1,24 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.env
+*.egg-info/
+.venv/
+venv/
+build/
+.pytest_cache/
+
+# Node
+node_modules/
+frontend/dist/
+
+# Misc
+.DS_Store
+*.local
+
+# Helm
+helm/*/charts/
+
+# Override secrets — keep out of git
+values.secret.yaml

@@ -1,0 +1,15 @@
+meta {
+  name: Delete Meal
+  type: http
+  seq: 5
+}
+
+delete {
+  url: {{baseUrl}}/meals/{{mealId}}
+  body: none
+  auth: none
+}
+
+assert {
+  res.status: eq 204
+}

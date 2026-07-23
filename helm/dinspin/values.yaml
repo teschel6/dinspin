@@ -1,0 +1,50 @@
+backend:
+  image: yourdockerhubuser/dinspin-backend
+  tag: latest
+  replicas: 1
+  port: 8000
+  nodePort: 30800
+  corsOrigins: "http://localhost:30080"
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+
+frontend:
+  image: yourdockerhubuser/dinspin-frontend
+  tag: latest
+  replicas: 1
+  port: 80
+  nodePort: 30080
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      cpu: 200m
+      memory: 128Mi
+
+postgres:
+  image: postgres:16-alpine
+  port: 5432
+  storage: 1Gi
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+
+# Override these at deploy time — never commit real values
+secret:
+  postgresUser: dinspin
+  postgresPassword: changeme
+  postgresDb: dinspin
+
+migrations:
+  # Uses backend.image; only tag is configurable separately if needed
+  tag: latest

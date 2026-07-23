@@ -1,0 +1,16 @@
+meta {
+  name: Delete Meal Not Found
+  type: http
+  seq: 6
+}
+
+delete {
+  url: {{baseUrl}}/meals/{{mealId}}
+  body: none
+  auth: none
+}
+
+assert {
+  res.status: eq 404
+  res.body.detail: eq "Meal not found"
+}
