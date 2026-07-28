@@ -19,6 +19,9 @@ spec:
           image: {{ .Values.frontend.image }}:{{ .Values.frontend.tag }}
           ports:
             - containerPort: {{ .Values.frontend.port }}
+          env:
+            - name: API_URL
+              value: {{ .Values.frontend.apiUrl | quote }}
           resources:
             {{- toYaml .Values.frontend.resources | nindent 12 }}
           readinessProbe:

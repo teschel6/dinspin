@@ -4,7 +4,7 @@ backend:
   replicas: 1
   port: 8000
   nodePort: 30800
-  corsOrigins: "http://localhost:30080"
+  corsOrigins: "http://changeme:30080"
   resources:
     requests:
       cpu: 100m
@@ -19,6 +19,7 @@ frontend:
   replicas: 1
   port: 80
   nodePort: 30080
+  apiUrl: "http://changeme:30800"
   resources:
     requests:
       cpu: 50m
@@ -42,7 +43,7 @@ postgres:
 # Override these at deploy time — never commit real values
 secret:
   postgresUser: dinspin
-  postgresPassword: changeme
+  postgresPassword: changeme 
   postgresDb: dinspin
 
 migrations:

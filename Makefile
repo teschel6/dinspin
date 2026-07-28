@@ -1,6 +1,6 @@
 DOCKER_USER ?= yourdockerhubuser
 TAG        ?= latest
-VITE_API_URL ?= http://localhost:30800
+API_URL    ?= http://localhost:30800
 
 .PHONY: up down logs migrate makemigration build push helm-install helm-upgrade test
 
@@ -22,7 +22,7 @@ makemigration:
 
 build:
 	docker build -t $(DOCKER_USER)/dinspin-backend:$(TAG) ./backend
-	docker build --build-arg VITE_API_URL=$(VITE_API_URL) -t $(DOCKER_USER)/dinspin-frontend:$(TAG) ./frontend
+	docker build -t $(DOCKER_USER)/dinspin-frontend:$(TAG) ./frontend
 
 push:
 	docker push $(DOCKER_USER)/dinspin-backend:$(TAG)
@@ -35,7 +35,9 @@ helm-install:
 	  --set backend.tag=$(TAG) \
 	  --set frontend.image=$(DOCKER_USER)/dinspin-frontend \
 	  --set frontend.tag=$(TAG) \
-	  --set migrations.tag=$(TAG)
+	  --set frontend.apiUrl=$(API_URL) \
+	  --set migrations.tag=$(TAG) \
+	  --namespace $(NAMESPACE)
 
 test:
 	cd bruno && bru run meals --env local
@@ -47,4 +49,6 @@ helm-upgrade:
 	  --set backend.tag=$(TAG) \
 	  --set frontend.image=$(DOCKER_USER)/dinspin-frontend \
 	  --set frontend.tag=$(TAG) \
-	  --set migrations.tag=$(TAG)
+	  --set frontend.apiUrl=$(API_URL) \
+	  --set migrations.tag=$(TAG) \
+	  --namespace $(NAMESPACE)

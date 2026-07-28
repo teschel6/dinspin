@@ -30,24 +30,31 @@ Backend docs: http://localhost:8000/docs
 ## Building and pushing images
 
 ```bash
-# Build both images (VITE_API_URL baked in at build time)
-make build DOCKER_USER=yourdockerhubuser TAG=abc1234 VITE_API_URL=http://homeserver-ip:30800
+# Build both images (no backend URL baked in — same image works anywhere)
+make build DOCKER_USER=yourdockerhubuser TAG=abc1234
 
 # Push to Docker Hub
 make push DOCKER_USER=yourdockerhubuser TAG=abc1234
 ```
 
-`VITE_API_URL` is embedded into the frontend bundle at build time via Vite's `import.meta.env`. It must point to the backend's NodePort address as seen from the browser.
+The frontend image is environment-agnostic. The backend URL is rendered into `/config.js` by nginx's `envsubst`-based templating (`frontend/docker/config.js.template` → `/etc/nginx/templates/config.js.template`) when the container starts, from the `API_URL` env var. `frontend/src/config.js` reads `window.__APP_CONFIG__.API_URL` at runtime, falling back to Vite's `import.meta.env.VITE_API_URL` for `npm run dev`. It must point to the backend's NodePort address as seen from the browser.
 
 ## Deploying to Kubernetes
 
 ```bash
 # First install (--wait ensures postgres is ready before the post-install migrations job runs)
-make helm-install DOCKER_USER=yourdockerhubuser TAG=abc1234 VITE_API_URL=http://homeserver-ip:30800
+make helm-install DOCKER_USER=yourdockerhubuser TAG=abc1234 \
+    API_URL=http://homeserver-ip:30800 \
+    NAMESPACE=dinspin
+
 
 # Subsequent deploys (triggers pre-upgrade migrations job before rolling out new pods)
-make helm-upgrade DOCKER_USER=yourdockerhubuser TAG=abc1234
+make helm-upgrade DOCKER_USER=yourdockerhubuser TAG=abc1234 \ 
+    API_URL=http://homeserver-ip:30800 \
+    NAMESPACE=dinspin
 ```
+
+`API_URL` maps to `frontend.apiUrl` in `values.yaml` and is passed to the frontend pod as an env var — changing it only requires `helm upgrade`, not an image rebuild.
 
 Always pass the real `secret.postgresPassword` via `--set` or a `values.secret.yaml` kept out of git.
 
@@ -67,7 +74,7 @@ Migrations live in `backend/alembic/versions/`. `alembic/env.py` reads `DATABASE
 
 ### Frontend (`frontend/`)
 
-- `src/config.js` — exports `apiUrl` derived from `VITE_API_URL` env var
+- `src/config.js` — exports `apiUrl`, read from `window.__APP_CONFIG__.API_URL` at runtime (falls back to Vite's `VITE_API_URL` for `npm run dev`)
 - `src/App.vue` — root component; add routes/views from here
 
 ### Helm chart (`helm/dinspin/`)
