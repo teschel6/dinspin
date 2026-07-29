@@ -19,9 +19,9 @@ make migrate
 make makemigration name="add users table"
 ```
 
-Frontend dev server: http://localhost:5173
-Backend API: http://localhost:8000
-Backend docs: http://localhost:8000/docs
+- Frontend dev server: http://localhost:5173
+- Backend API: http://localhost:8000
+- Backend docs: http://localhost:8000/docs
 
 ## Building Images
 
