@@ -4,6 +4,7 @@ API_URL    ?= http://localhost:30800
 
 .PHONY: up down logs migrate makemigration build push helm-install helm-upgrade test
 
+####################  LOCAL COMMANDS #################### 
 up:
 	docker compose up --build
 
@@ -19,6 +20,11 @@ migrate:
 # Usage: make makemigration name="add users table"
 makemigration:
 	docker compose run --rm backend alembic revision --autogenerate -m "$(name)"
+
+test:
+	cd bruno && bru run meals --env local
+
+#################### DEPLOYMENT COMMANDS #################### 
 
 build:
 	docker build -t $(DOCKER_USER)/dinspin-backend:$(TAG) ./backend
@@ -38,9 +44,6 @@ helm-install:
 	  --set frontend.apiUrl=$(API_URL) \
 	  --set migrations.tag=$(TAG) \
 	  --namespace $(NAMESPACE)
-
-test:
-	cd bruno && bru run meals --env local
 
 helm-upgrade:
 	helm upgrade dinspin ./helm/dinspin \

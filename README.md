@@ -2,11 +2,11 @@
 
 A self hosted web app to answer the age old question of "Whats for dinner?"
 
-- This app is mostly vibe coded 🤖 use at your own peril
+- Disclaimer: This app is mostly vibe coded 🤖 use at your own peril
 
 <img width="665" height="556" alt="image" src="https://github.com/user-attachments/assets/a6f256c5-430c-4f74-a9ad-8ca471893109" />
 
-## Local development
+## Local Development
 
 ```bash
 # Start all services (postgres, backend with hot-reload, frontend with HMR)
@@ -23,7 +23,7 @@ Frontend dev server: http://localhost:5173
 Backend API: http://localhost:8000
 Backend docs: http://localhost:8000/docs
 
-## Building and pushing images
+## Building Images
 
 ```bash
 # Build both images (no backend URL baked in — same image works anywhere)
@@ -35,9 +35,10 @@ make push DOCKER_USER=yourdockerhubuser TAG=abc1234
 
 ## Deploying to Kubernetes
 
-### Using `make`
+Update the [values.yaml](helm/dinspin/values.yaml) to your desired configuration.
 
 ```bash
+
 # First install (--wait ensures postgres is ready before the post-install migrations job runs)
 make helm-install DOCKER_USER=yourdockerhubuser TAG=abc1234 API_URL=http://homeserver-ip:30800 NAMESPACE=dinspin
 
